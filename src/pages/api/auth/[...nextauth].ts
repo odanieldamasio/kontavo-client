@@ -10,45 +10,78 @@ export const authOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const response = await fetch(`${process.env.NEXTAUTH_URL}/auth/login`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(credentials),
-        });
+        try {
+          const response = await fetch(
+            `${process.env.BACKEND_API_URL}/auth/login`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(credentials),
+            }
+          );
 
-        const user = await response.json();
+          const data = await response.json();
 
-        if (response.ok && user.access_token) {
-          return {
-            id: user.id,
-            email: user.email,
-            accessToken: user.access_token,
+          if (!response.ok) {
+            throw new Error(data.message || "Erro ao autenticar");
+          }
+
+          const user = {
+            id: data.user?.id || data.userId,
+            name: data.user?.name || data.name || "Usuário",
+            email: data.user?.email || data.email,
+            accessToken: data.access_token || data.accessToken,
           };
-        }
 
-        return null;
+          console.log("Usuário autenticado (authorize):", user);
+
+          return user;
+        } catch (error) {
+          console.error("Erro no authorize:", error);
+          return null;
+        }
       },
     }),
   ],
+
   callbacks: {
     async jwt({ token, user }) {
+      // Executa no login e a cada requisição
       if (user) {
+        token.userId = user.id;
+        token.name = user.name;
+        token.email = user.email;
         token.accessToken = user.accessToken;
       }
+
       return token;
     },
+
     async session({ session, token }) {
+      // Passa os dados para o cliente
+      session.user = {
+        id: token.userId,
+        name: token.name,
+        email: token.email,
+      };
       session.accessToken = token.accessToken;
+
       return session;
     },
   },
+
   session: {
     strategy: "jwt",
   },
+
   jwt: {
     secret: process.env.NEXTAUTH_SECRET,
   },
-  pages: { signIn: "/login", signOut: "/auth/signout" },
+
+  pages: {
+    signIn: "/login",
+    signOut: "/auth/signout",
+  },
 };
 
 export default NextAuth(authOptions);

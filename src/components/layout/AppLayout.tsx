@@ -17,21 +17,12 @@ export default function AppLayout({ children }: AppLayoutProps) {
 
   return (
     <ProtectedRoute>
-      <div className="flex min-h-screen overflow-hidden bg-gray-50">
-        {/* Sidebar */}
-        <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
+      <div className="flex flex-col min-h-screen overflow-hidden bg-gray-50">
+        <Header/>
 
-        {/* Conteúdo principal */}
-        <div className="flex-1 flex flex-col md:ml-72 mt-16">
-          {/* Header fixo */}
-          <Header
-            title="Minhas Transações"
-            onMenuClick={() => setSidebarOpen(true)}
-          />
-
-          {/* Área de conteúdo */}
+        <div className="flex-1 flex flex-col pb-6">
           <main className=" flex-1 overflow-y-auto">
-            <div className="max-w-[1530px] mx-auto grid p-6">{children}</div>
+            <div className="mx-auto grid px-6">{children}</div>
           </main>
         </div>
       </div>

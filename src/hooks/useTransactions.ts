@@ -10,12 +10,13 @@ type Transaction = {
   totalAmount: number | string;
   installments: number;
   createdAt: string;
-}
+};
 
 export function useTransactions() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
 
   async function fetchTransactions() {
     setLoading(true);
@@ -31,6 +32,32 @@ export function useTransactions() {
     }
   }
 
+  async function createTransaction(data: any) {
+    setLoading(true);
+    setError(null);
+    setSuccess(false);
+
+    try {
+      const res = await fetch("/api/transactions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) throw new Error(result.error || "Erro ao cadastrar");
+
+      setSuccess(true);
+      return result.data;
+    } catch (err: any) {
+      setError(err.message || "Erro inesperado");
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }
+
   useEffect(() => {
     fetchTransactions();
   }, []);
@@ -40,5 +67,6 @@ export function useTransactions() {
     loading,
     error,
     fetchTransactions,
+    createTransaction
   };
 }

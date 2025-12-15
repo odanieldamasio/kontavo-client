@@ -1,47 +1,35 @@
 "use client";
-import { HiOutlineMenu, HiOutlineUser } from "react-icons/hi";
+
 import Image from "next/image";
+import { HiLogout, HiPlus } from "react-icons/hi";
+import Button from '../ui/Button';
 
 type HeaderProps = {
-  title: string;
-  onMenuClick?: () => void; // para abrir sidebar no mobile
-  actions?: React.ReactNode; // botões extras (adicionar, filtros, etc)
+  onAddClick?: () => void;
 };
 
-export default function Header({ title, onMenuClick, actions }: HeaderProps) {
+export default function Header({ onAddClick }: HeaderProps) {
   return (
-    <header className="w-full bg-white border-b border-[#EBEEEC] px-4 py-3 flex items-center justify-between fixed top-0 right-0 z-40 shadow-sm shadow-[#EBEEEC]">
-      {/* Botão menu (mobile) + título */}
-      <div className="flex items-center gap-3">
-        <button
-          onClick={onMenuClick}
-          className="md:hidden text-slate-700 hover:text-slate-900 p-2 rounded-md hover:bg-slate-100"
-        >
-          <HiOutlineMenu size={24} />
-        </button>
-        <div className="md:hidden flex justify-between items-center">
-          <Image
-            src="/imgs/logo-black.svg"
-            alt="Logo BananaFluxo"
-            width={166}
-            height={40}
-            className="object-contain block max-w-[166px]"
-          />
-        </div>
-        {/* <h1 className="text-lg md:text-xl font-semibold text-slate-800">
-          {title}
-        </h1> */}
+    <header className="w-full px-6 py-4 flex items-center justify-between">
+      {/* Logo */}
+      <div className="flex items-center">
+        <Image
+          src="/imgs/logo-black.svg"
+          alt="Logo Kontavo"
+          width={160}
+          height={40}
+          className="object-contain"
+        />
       </div>
 
-      {/* Ações extras */}
-      <div className="flex items-center gap-4">
-        {actions}
-
-        {/* Avatar */}
-        <div className="h-8 w-8 flex items-center justify-center rounded-full overflow-hidden border border-slate-300 shadow-sm">
-          <HiOutlineUser size={24} />
-        </div>
-      </div>
+      {/* Botão de adicionar */}
+      <Button
+        icon={HiPlus}
+        href={"/transactions/create"}
+        label={"Nova Movimentação"}
+        bgColor="bg-[#111] hover:bg-[#222]"
+        textColor="text-white"
+      />
     </header>
   );
 }
