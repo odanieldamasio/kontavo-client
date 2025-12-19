@@ -4,19 +4,37 @@ import AppLayout from "@/components/layout/AppLayout";
 import CardKPI from "@/components/dashboard/CardKPI";
 import { Poppins } from "next/font/google";
 import DashboardSkeleton from "./DashboardSkeleton";
-import { useAuthGuard } from "@/hooks/useAuthGuard";
 import IncomeExpenseChart from "@/components/charts/IncomeExpenseChart";
 import { useDashboardKPI } from "@/hooks/useDashboard";
-
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-poppins",
-});
+import PageHeader from "@/components/ui/PageHeader";
+import Button from "../../components/ui/Button";
+import { HiChartBar, HiPlus } from "react-icons/hi";
+import { useSession } from "next-auth/react";
+import {
+  getGreeting,
+  getCurrentMonthYear,
+  getFormattedFullDate,
+} from "@/utils/date";
+import {
+  HiArrowTrendingDown,
+  HiArrowTrendingUp,
+  HiBanknotes,
+  HiWallet,
+} from "react-icons/hi2";
+import { formatCurrencyBR } from "@/utils/currency";
+import Link from "next/link";
 
 export default function DashboardPage() {
   // const { loading } = useAuthGuard();
   const { dashboardKPI, loading, error } = useDashboardKPI();
+
+  const { data: session, status } = useSession();
+
+  const fullName = session?.user?.name ?? "";
+  const firstName = fullName.split(" ")[0];
+
+  const greeting = getGreeting(firstName);
+  const monthYear = getCurrentMonthYear();
 
   if (loading) {
     return (
@@ -32,128 +50,128 @@ export default function DashboardPage() {
 
   return (
     <AppLayout>
-      {/* <PageHeader title="Visão Geral" description="Resumo das suas finanças" /> */}
+      <PageHeader
+        title="Dashboard"
+        description={
+          <>
+            {greeting} | Aqui está um resumo {""}das suas finanças de
+            {""}
+            <span
+              className="
+                bg-[linear-gradient(90deg,#0ACDB5_20%,#FC9220_80%)]
+                bg-clip-text
+                text-transparent
+                font-medium
+              "
+            >
+              {" "}
+              {""}
+              {monthYear}
+            </span>
+            .{" "}
+          </>
+        }
+      >
+        <Button
+          href="/transactions/new"
+          icon={HiPlus}
+          style="bg-[#0F172A] text-[#FFFFFF] "
+        >
+          Nova movimentação
+        </Button>
+      </PageHeader>
       <div
-        className={`grid gap-6 grid-cols-1 mb-6 md:grid-cols-2 xl:grid-cols-4`}
+        className={`grid gap-6 grid-cols-1 mb-6 pb-6 border-b border-[#F1F1F1] md:grid-cols-2 xl:grid-cols-4`}
       >
         <CardKPI
-          data={{
-            label: "Saldo Atual",
-            value: dashboardKPI?.currentBalance,
-            description: "+ $1,245.00 desde o mês passado",
-          }}
+          label="Saldo Atual"
+          icon={HiWallet}
+          value={formatCurrencyBR(dashboardKPI?.currentBalance ?? 0)}
+          style="bg-[#0ACDB5] text-white"
         />
         <CardKPI
-          data={{
-            label: "Valor Futuro a Receber",
-            value: dashboardKPI?.projectedIncome,
-            description: "Daqui a 7 dia(s)",
-          }}
+          label="Lucro Líquido"
+          icon={HiChartBar}
+          value={formatCurrencyBR(dashboardKPI?.netrofit ?? 0)}
+          style="bg-[#F4F4F4] text-[#0F172A]"
         />
         <CardKPI
-          data={{
-            label: "Total de Receitas",
-            value: dashboardKPI?.totalIncome,
-            description: "+ $1,245.00 desde o mês passado",
-          }}
+          label="Faturamento total"
+          icon={HiArrowTrendingUp}
+          value={formatCurrencyBR(dashboardKPI?.projectedIncome ?? 0)}
+          style="bg-[#F4F4F4] text-[#0F172A]"
         />
         <CardKPI
-          data={{
-            label: "Total de movimentações",
-            value: dashboardKPI?.totalTransactions,
-            description: "+ $1,245.00 desde o mês passado",
-          }}
+          label="Gastos"
+          icon={HiArrowTrendingDown}
+          value={formatCurrencyBR(dashboardKPI?.totalExpense ?? 0)}
+          style="bg-[#F4F4F4] text-[#0F172A]"
         />
       </div>
 
-      <div className="grid gap-6 grid-cols-1 md:grid-cols-3">
-        <div className="p-6 border-[#EBEEEC] border bg-white rounded flex flex-col gap-2 grid md:col-span-2 ">
-          <span className="text-2xl font-medium">Desempenho Financeiro Mensal</span>
-          <span className="text-sm text-gray-500">
-            Acompanhe suas receitas e despesas dos últimos meses.
-          </span>
-          <div className="pt-2">
-          <IncomeExpenseChart data={dashboardKPI?.monthlyPerformance} />
+      <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
+        <div className=" p-4 border-[#F1F1F1] border bg-white rounded flex flex-col">
+          <div className="flex items-center justify-between pb-4">
+            <p className="text-[#626262] text-sm">Últimas movimentações</p>
+            <p>
+              <Link
+                href="/transactions"
+                className={`text-sm font-medium underline`}
+              >
+                Ver mais
+              </Link>
+            </p>
+          </div>
+          <div className="flex flex-col h-full gap-4">
+            {dashboardKPI?.lastTransactions?.length ? (
+              dashboardKPI.lastTransactions.map((transaction) => (
+                <div
+                  key={transaction.id}
+                  className="flex items-center justify-between border-t border-[#EBEEEC] pt-4"
+                >
+                  <div className="space-y-1">
+                    <p className="text-sm font-semibold text-[#0F172A]">
+                      {transaction.title}
+                    </p>
+                    <p className="text-xs text-[#0F172A] opacity-40">
+                      {transaction.description}
+                    </p>
+                  </div>
+
+                  <div className="space-y-1 flex flex-col items-end">
+                    <p
+                      className={`text-sm font-medium ${
+                        transaction.type === "income"
+                          ? "text-[#87BE5E]"
+                          : "text-[#EF4444]"
+                      }`}
+                    >
+                      {transaction.type === "income"
+                        ? "+ "
+                        : "- "}
+                      {formatCurrencyBR(transaction.amount)}
+                    </p>
+                    <p className="text-xs text-[#0F172A] opacity-40">
+                      {getFormattedFullDate(transaction.date)}
+                    </p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="flex flex-1 items-center justify-center">
+                <p className="text-sm text-[#0F172A] opacity-40">
+                  Nenhuma movimentação ainda.
+                </p>
+              </div>
+            )}
           </div>
         </div>
-
-        <div className="p-6 border-[#EBEEEC] border bg-white rounded flex flex-col gap-2">
-          <span className="text-2xl font-medium">Movimentações Recentes</span>
-          <span className="text-sm text-gray-500">
-            Suas últimas moviementações.
-          </span>
-          <div className="pt-2 flex flex-col gap-6">
-            <div className="flex items-center grow">
-              <div className="space-y-1">
-                <p className="text-sm font-medium leading-none">
-                  Grocery Shopping
-                </p>
-                <p className="text-sm text-muted-foreground">Today</p>
-              </div>
-              <div className="ml-auto font-medium">
-                <span className="text-red-500">$120.50</span>
-              </div>
-              <div
-                className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 text-foreground ml-2"
-                data-v0-t="badge"
-              >
-                Food
-              </div>
-            </div>
-
-            <div className="flex items-center grow">
-              <div className="space-y-1">
-                <p className="text-sm font-medium leading-none">
-                  Grocery Shopping
-                </p>
-                <p className="text-sm text-muted-foreground">Today</p>
-              </div>
-              <div className="ml-auto font-medium">
-                <span className="text-red-500">$120.50</span>
-              </div>
-              <div
-                className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 text-foreground ml-2"
-                data-v0-t="badge"
-              >
-                Food
-              </div>
-            </div>
-
-            <div className="flex items-center grow">
-              <div className="space-y-1">
-                <p className="text-sm font-medium leading-none">
-                  Grocery Shopping
-                </p>
-                <p className="text-sm text-muted-foreground">Today</p>
-              </div>
-              <div className="ml-auto font-medium">
-                <span className="text-red-500">$120.50</span>
-              </div>
-              <div
-                className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 text-foreground ml-2"
-                data-v0-t="badge"
-              >
-                Food
-              </div>
-            </div>
-
-            <div className="flex items-center grow">
-              <div className="space-y-1">
-                <p className="text-sm font-medium leading-none">
-                  Grocery Shopping
-                </p>
-                <p className="text-sm text-muted-foreground">Today</p>
-              </div>
-              <div className="ml-auto font-medium">
-                <span className="text-green-500">$120.50</span>
-              </div>
-              <div
-                className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 text-foreground ml-2"
-                data-v0-t="badge"
-              >
-                Food
-              </div>
-            </div>
+        <div className=" p-4 border-[#F1F1F1] border bg-white rounded flex flex-col">
+          <div className="flex items-center justify-between pb-4">
+            <p className="text-[#626262] text-sm">Últimos 4 Meses</p>
+          </div>
+          <div className="flex flex-col gap-4">
+            <IncomeExpenseChart data={dashboardKPI?.monthlyPerformance} />
           </div>
         </div>
       </div>

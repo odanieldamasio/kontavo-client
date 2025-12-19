@@ -31,46 +31,34 @@ export default function IncomeExpenseChart({
 
   const options: ApexOptions = {
     chart: {
-      type: "area",
+      type: "bar",
       height: 350,
       toolbar: { show: false },
       fontFamily: "Poppins, sans-serif",
       background: "transparent",
     },
-    // title: {
-    //   text: "Linha do Tempo",
-    //   align: "left",
-    //   style: {
-    //     fontSize: "16px",
-    //     fontWeight: "600",
-    //     color: "#374151",
-    //     fontFamily: "Poppins",
-    //   },
-    // },
+
     plotOptions: {
       bar: {
-        horizontal: true,
-        columnWidth: "65%",
+        horizontal: false,
+        columnWidth: "80%",
         borderRadius: 4,
+        borderRadiusApplication: "end",
       },
     },
-    dataLabels: { enabled: false },
-    stroke: {
-      show: true,
-      width: 3,
-      colors: ["transparent"],
+
+    dataLabels: {
+      enabled: false,
     },
+
+    stroke: {
+      show: false,
+    },
+
     xaxis: {
       categories: labels,
-      labels: {
-        style: {
-          fontFamily: "Poppins",
-          fontSize: "12px",
-          colors: "#2E2E2E",
-        },
-      },
-    },
-    yaxis: {
+      axisBorder: { show: false },
+      axisTicks: { show: false },
       labels: {
         style: {
           fontFamily: "Poppins",
@@ -79,30 +67,50 @@ export default function IncomeExpenseChart({
         },
       },
     },
+
+    yaxis: {
+      labels: {
+        formatter: (val: number) => `R$ ${val.toLocaleString("pt-BR")}`,
+        style: {
+          fontFamily: "Poppins",
+          fontSize: "12px",
+          colors: "#6b7280",
+        },
+      },
+    },
+
     grid: {
       borderColor: "#e5e7eb",
       strokeDashArray: 4,
       yaxis: { lines: { show: true } },
       xaxis: { lines: { show: false } },
     },
+
+    legend: {
+      position: "bottom",
+      horizontalAlign: "center",
+      fontFamily: "Poppins",
+      labels: {
+        colors: "#6b7280",
+      },
+    },
+
     tooltip: {
       theme: "light",
       y: {
         formatter: (val: number) => `R$ ${val.toLocaleString("pt-BR")}`,
       },
     },
-    legend: {
-      position: "bottom",
-      horizontalAlign: "center",
-      fontFamily: "Poppins",
-    },
-    colors: ["#22c55e", "#ef4444"],
+
+    colors: [
+      "#9ACD7F", // Receitas (verde)
+      "#F87171", // Despesas (vermelho)
+    ],
   };
 
   if (data.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-64 rounded-2xl border border-dashed border-[#DADDDB] p-6">
-        {/* Ícone sutil */}
         <div className="mb-4 text-muted-foreground/50">
           <svg
             xmlns="http://www.w3.org/2000/svg"

@@ -7,7 +7,9 @@ type DashboardKPI = {
   projectedIncome: number;
   totalExpense: number;
   totalTransactions: number;
+  netProfit: number;
   monthlyPerformance: any;
+  lastTransactions: any[];
 };
 
 export function useDashboardKPI() {

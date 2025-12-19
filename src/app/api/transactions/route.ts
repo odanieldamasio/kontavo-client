@@ -2,14 +2,17 @@ import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 
-export async function GET() {
+export async function GET(request: Request) {
   const session = await getServerSession(authOptions);
 
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const response = await fetch(`${process.env.BACKEND_API_URL}/transactions`, {
+   const { searchParams } = new URL(request.url);
+  const page = searchParams.get("page") ?? "1";
+
+  const response = await fetch(`${process.env.BACKEND_API_URL}/transactions?page=${page}`, {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${session.accessToken}`,
@@ -24,7 +27,6 @@ export async function GET() {
 
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
-  console.log("Sessão:", session);
 
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -41,7 +43,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // 🔧 Normaliza os dados para o formato esperado pelo backend
     const normalizedBody = {
       ...body,
       type: body.type.toLowerCase(), // INCOME → income

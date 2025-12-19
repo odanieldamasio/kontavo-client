@@ -33,11 +33,8 @@ export const authOptions = {
             accessToken: data.access_token || data.accessToken,
           };
 
-          console.log("Usuário autenticado (authorize):", user);
-
           return user;
         } catch (error) {
-          console.error("Erro no authorize:", error);
           return null;
         }
       },
