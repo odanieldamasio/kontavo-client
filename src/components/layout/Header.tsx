@@ -1,47 +1,47 @@
 "use client";
-import { HiOutlineMenu, HiOutlineUser } from "react-icons/hi";
+
 import Image from "next/image";
+import { HiLogout, HiPlus } from "react-icons/hi";
+import Button from "../ui/Button";
+import Link from "next/link";
+import { SidebarButtonLogout } from '../sidebar/SidebarButtonLogout';
 
 type HeaderProps = {
-  title: string;
-  onMenuClick?: () => void; // para abrir sidebar no mobile
-  actions?: React.ReactNode; // botões extras (adicionar, filtros, etc)
+  onAddClick?: () => void;
 };
 
-export default function Header({ title, onMenuClick, actions }: HeaderProps) {
+export default function Header({ onAddClick }: HeaderProps) {
   return (
-    <header className="w-full bg-white border-b border-[#EBEEEC] px-4 py-3 flex items-center justify-between fixed top-0 right-0 z-40 shadow-sm shadow-[#EBEEEC]">
-      {/* Botão menu (mobile) + título */}
-      <div className="flex items-center gap-3">
-        <button
-          onClick={onMenuClick}
-          className="md:hidden text-slate-700 hover:text-slate-900 p-2 rounded-md hover:bg-slate-100"
-        >
-          <HiOutlineMenu size={24} />
-        </button>
-        <div className="md:hidden flex justify-between items-center">
-          <Image
-            src="/imgs/logo-black.svg"
-            alt="Logo BananaFluxo"
-            width={166}
-            height={40}
-            className="object-contain block max-w-[166px]"
-          />
-        </div>
-        {/* <h1 className="text-lg md:text-xl font-semibold text-slate-800">
-          {title}
-        </h1> */}
+    <header className="w-full px-6 py-2 flex items-center justify-between bg-white border-b border-[#F1F1F1] mb-6">
+      {/* Logo */}
+      <div className="flex items-center">
+        <img
+          src="/imgs/logo-black.svg"
+          alt="Kontavo Brand"
+          className="!w-[120px] !h-auto !max-w-none inline-block"
+        />
       </div>
 
-      {/* Ações extras */}
-      <div className="flex items-center gap-4">
-        {actions}
+      {/* Botão de adicionar */}
+      <ul className="flex items-center gap-6 text-sm font-semibold text-[#BDBDBD]">
+        <li>
+          <Link href="/dashboard" className="p-4 hover:text-[#0F172A] transition-all duration-300 ease-in-out">Dashboard</Link>
+        </li>
+        <li>
+          <Link href="/transactions" className="p-4 hover:text-[#0F172A] transition-all duration-300 ease-in-out">Movimentações</Link>
+        </li>
+        <li>
+          <SidebarButtonLogout />
+        </li>
+      </ul>
 
-        {/* Avatar */}
-        <div className="h-8 w-8 flex items-center justify-center rounded-full overflow-hidden border border-slate-300 shadow-sm">
-          <HiOutlineUser size={24} />
-        </div>
-      </div>
+      {/* <Button
+        icon={HiPlus}
+        href={"/transactions/create"}
+        label={"Nova Movimentação"}
+        bgColor="bg-[#111] hover:bg-[#222]"
+        textColor="text-white"
+      /> */}
     </header>
   );
 }

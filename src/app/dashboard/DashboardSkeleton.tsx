@@ -1,6 +1,6 @@
 "use client";
 
-import CardContainer from "@/components/dashboard/CardContainer";
+import CardContainer from "@/components/dashboard/CardKPI";
 
 export default function DashboardSkeleton() {
   return (

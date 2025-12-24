@@ -86,6 +86,31 @@ export default function LoginPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Nome */}
+            <div className="space-y-1">
+              <label
+                htmlFor="name"
+                className="text-sm font-medium text-gray-700"
+              >
+                Nome
+              </label>
+              <input
+                id="email"
+                type="email"
+                placeholder="exemplo@empresa.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className={`w-full h-12 px-4 border rounded-lg text-base bg-white focus:outline-none focus:ring-2 ${
+                  errors.email
+                    ? "border-red-500 focus:ring-red-500"
+                    : "border-[#F1F1F1] focus:ring-[#F0F0F0]"
+                }`}
+              />
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+              )}
+            </div>
+
             {/* E-mail */}
             <div className="space-y-1">
               <label
@@ -180,9 +205,9 @@ export default function LoginPage() {
 
           <div className="space-y-2 text-center">
             <p className="text-[#222222] opacity-70">
-              Não tem uma conta?{" "}
-              <a href="/register" className="font-medium text-[#0F172A]">
-                Cadastre-se
+              Já possúi uma conta?{" "}
+              <a href="/login" className="font-medium text-[#0F172A]">
+               Faça login
               </a>
             </p>
           </div>
