@@ -5,10 +5,12 @@ import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
 import Image from "next/image";
 import { HiEye, HiEyeOff } from "react-icons/hi";
+import { useToast } from "@/components/toast/ToastContext";
 
 export default function LoginPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const { showToast } = useToast();
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -49,6 +51,7 @@ export default function LoginPage() {
 
     if (response?.ok) {
       router.push("/dashboard");
+      showToast("🛡️ Login realizado com sucesso!", "success");
     } else {
       setErrors({ global: "Usuário ou senha inválidos" });
       setLoading(false);

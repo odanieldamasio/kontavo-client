@@ -1,167 +1,141 @@
 "use client";
 
-import { notFound, useParams, useRouter } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import { useTransaction } from "@/hooks/useTransaction";
-import { HiArrowLeft, HiCheck, HiClock } from "react-icons/hi";
 import AppLayout from "@/components/layout/AppLayout";
+import { HiArchive, HiPencil, HiPlus } from "react-icons/hi";
 import PageHeader from "@/components/ui/PageHeader";
+import Button from "@/components/ui/Button";
 
 export default function TransactionDetailsPage() {
   const { id } = useParams();
-  const router = useRouter();
   const { transaction, loading } = useTransaction(id as string);
 
   if (loading) {
     return (
       <AppLayout>
-        <div className="flex flex-col gap-5 p-6 animate-pulse">
-          <div className="h-10 w-52 bg-gray-300 rounded-lg" />
-          <div className="h-28 w-full bg-gray-300 rounded-lg" />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <div className="h-20 bg-gray-300 rounded-lg" />
-            <div className="h-20 bg-gray-300 rounded-lg" />
-            <div className="h-20 bg-gray-300 rounded-lg" />
-            <div className="h-20 bg-gray-300 rounded-lg" />
-          </div>
+        <div className="p-6 space-y-6 animate-pulse">
+          <div className="h-6 w-64 bg-gray-200 rounded" />
+          <div className="h-32 bg-gray-200 rounded" />
+          <div className="h-48 bg-gray-200 rounded" />
         </div>
       </AppLayout>
     );
   }
 
-  if (transaction.status === 404 || !transaction) {
+  if (!transaction || transaction.status === 404) {
     return notFound();
   }
 
   return (
     <AppLayout>
-      <div className="p-6">
-        <PageHeader
-          title="Detalhes da Transação"
-          buttonLink="/transactions"
-          buttonTitle="Voltar"
-        />
+      <PageHeader
+        title={transaction.title}
+        description={`ID: ${transaction.id}`}
+      >
+        <Button
+          href="/transactions/create"
+          icon={HiPencil}
+          style="bg-[#0F172A] text-[#FFFFFF]"
+        >
+          Editar
+        </Button>
+        <Button
+          href="/transactions/create"
+          icon={HiArchive}
+          style="bg-[#EF4444] text-[#FFFFFF]"
+        >
+          Arquivar
+        </Button>
+      </PageHeader>
+      
+      <div className="p-6 max-w-6xl mx-auto space-y-6">
+       
 
-        {/* Card principal */}
-        <div className="rounded border border-gray-200 bg-white p-6 mb-8">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-            <div className="mb-4 sm:mb-0">
-              <h2 className="text-xl font-semibold text-gray-800 mb-1">
-                {transaction.description || "Sem descrição"}
-              </h2>
-              <p className="text-gray-500 text-sm">
-                {new Date(transaction.createdAt).toLocaleDateString("pt-BR")}
+        {/* DETALHES */}
+        <div className="bg-white border border-gray-200 rounded-xl">
+          <div className="px-6 py-4 border-b text-sm text-gray-500">
+            Detalhes
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-10 px-6 py-6">
+            <div>
+              <p className="text-sm font-medium text-gray-700">Tipo</p>
+              <p className="text-sm text-gray-400 mt-1">
+                {transaction.type === "INCOME" ? "Receita" : "Conta de energia"}
               </p>
             </div>
-            <div
-              className={`text-2xl font-bold ${
-                transaction.type === "INCOME"
-                  ? "text-green-600"
-                  : "text-red-600"
-              }`}
-            >
-              {transaction.type === "INCOME" ? "+" : "-"} R${" "}
-              {Number(transaction.totalAmount).toFixed(2)}
+
+            <div>
+              <p className="text-sm font-medium text-gray-700">Categoria</p>
+              <p className="text-sm text-gray-400 mt-1">
+                {transaction.category?.name || "Não definida"}
+              </p>
+            </div>
+
+            <div>
+              <p className="text-sm font-medium text-gray-700">
+                Método de Pagamento
+              </p>
+              <p className="text-sm text-gray-400 mt-1">Compras do mês.</p>
+            </div>
+
+            <div>
+              <p className="text-sm font-medium text-gray-700">Data</p>
+              <p className="text-sm text-gray-400 mt-1">
+                {new Date(transaction.createdAt).toLocaleString("pt-BR")}
+              </p>
             </div>
           </div>
         </div>
 
-        {/* Detalhes adicionais */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-          <div className="rounded border border-gray-200 bg-white p-5">
-            <span className="text-sm text-gray-500">Tipo</span>
-            <p className="font-medium mt-1">
-              {transaction.type === "INCOME" ? "Receita" : "Despesa"}
-            </p>
+        {/* PARCELAS */}
+        <div className="bg-white border border-gray-200 rounded-xl">
+          <div className="px-6 py-4 border-b text-sm text-gray-500">
+            Parcelas
           </div>
-          <div className="rounded border border-gray-200 bg-white p-5">
-            <span className="text-sm text-gray-500">Parcelas</span>
-            <p className="font-medium mt-1">{transaction.installments || 1}</p>
-          </div>
-          <div className="rounded border border-gray-200 bg-white p-5">
-            <span className="text-sm text-gray-500">Criado em</span>
-            <p className="font-medium mt-1">
-              {new Date(transaction.createdAt).toLocaleString("pt-BR")}
-            </p>
-          </div>
-          <div className="rounded border border-gray-200 bg-white p-5">
-            <span className="text-sm text-gray-500">Categoria</span>
-            <p className="font-medium mt-1">
-              {transaction.category || "Não definida"}
-            </p>
+
+          <div className="divide-y">
+            {transaction.installments.map((parcel: any, index: number) => (
+              <div
+                key={parcel.id}
+                className="flex items-center justify-between px-6 py-5"
+              >
+                <div>
+                  <p className="text-sm font-medium text-gray-800">
+                    Parcela {index + 1}
+                  </p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    Vence em:{" "}
+                    {new Date(parcel.dueDate).toLocaleDateString("pt-BR")}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-6">
+                  <p className="text-sm font-semibold text-gray-800">
+                    R$ {Number(parcel.amount).toFixed(2)}
+                  </p>
+
+                  {parcel.status === "Pago" ? (
+                    <span className="px-3 py-1 text-xs font-medium rounded bg-green-50 text-green-600">
+                      Pago
+                    </span>
+                  ) : (
+                    <>
+                      <span className="px-3 py-1 text-xs font-medium rounded bg-yellow-50 text-yellow-600">
+                        Pendente
+                      </span>
+                      <button className="flex items-center gap-1 px-4 py-2 rounded-lg bg-green-500 text-white text-sm font-medium hover:bg-green-600">
+                        <HiPlus />
+                        Pagar
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
-
-        {/* Parcelas */}
-        {transaction.installmentsList &&
-          transaction.installmentsList.length > 0 && (
-            <div className="rounded border border-gray-200 bg-white overflow-hidden">
-              <div className="p-6 border-b border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900">
-                  Parcelas a Pagar
-                </h3>
-                <p className="text-sm text-gray-500 mt-1">
-                  Acompanhe o status de cada parcela abaixo.
-                </p>
-              </div>
-
-              <div className="overflow-x-auto">
-                <table className="min-w-full text-sm text-gray-800">
-                  <thead>
-                    <tr className="bg-gray-50 border-b text-gray-600">
-                      <th className="px-6 py-3 text-left font-medium">#</th>
-                      <th className="px-6 py-3 text-left font-medium">
-                        Status
-                      </th>
-                      <th className="px-6 py-3 text-left font-medium">Valor</th>
-                      <th className="px-6 py-3 text-left font-medium">
-                        Vencimento
-                      </th>
-                      <th className="px-6 py-3 text-right font-medium">Ação</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {transaction.installmentsList.map(
-                      (parcel: any, i: number) => (
-                        <tr
-                          key={parcel.id}
-                          className="border-b hover:bg-gray-50 transition-colors"
-                        >
-                          <td className="px-6 py-3">{i + 1}</td>
-                          <td className="px-6 py-3 flex items-center gap-2">
-                            {parcel.status === "Pago" ? (
-                              <HiCheck className="w-4 h-4 text-green-500" />
-                            ) : (
-                              <HiClock className="w-4 h-4 text-yellow-500" />
-                            )}
-                            <span>{parcel.status}</span>
-                          </td>
-                          <td className="px-6 py-3 font-semibold">
-                            R$ {Number(parcel.amount).toFixed(2)}
-                          </td>
-                          <td className="px-6 py-3">
-                            {new Date(parcel.dueDate).toLocaleDateString(
-                              "pt-BR"
-                            )}
-                          </td>
-                          <td className="px-6 py-3 text-right">
-                            {parcel.status !== "Pago" ? (
-                              <button className="px-4 py-1.5 text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg">
-                                Pagar
-                              </button>
-                            ) : (
-                              <span className="text-green-600 font-medium">
-                                ✔
-                              </span>
-                            )}
-                          </td>
-                        </tr>
-                      )
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
       </div>
     </AppLayout>
   );

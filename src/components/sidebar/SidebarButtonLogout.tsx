@@ -10,6 +10,7 @@ export function SidebarButtonLogout() {
     });
 
     router.replace("/login");
+    
   }
 
   return (

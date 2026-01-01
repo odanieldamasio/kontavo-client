@@ -23,7 +23,7 @@ export default function Header({ onAddClick }: HeaderProps) {
       </div>
 
       {/* Botão de adicionar */}
-      <ul className="flex items-center gap-6 text-sm font-semibold text-[#BDBDBD]">
+      <ul className="flex items-center gap-6 text-sm font-medium text-[#BDBDBD]">
         <li>
           <Link href="/dashboard" className="p-4 hover:text-[#0F172A] transition-all duration-300 ease-in-out">Dashboard</Link>
         </li>

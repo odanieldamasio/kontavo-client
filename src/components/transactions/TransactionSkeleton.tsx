@@ -1,43 +1,65 @@
 "use client";
 
-export default function TransactionSkeleton() {
-  const skeletons = Array.from({ length: 3 });
+import React from "react";
+
+export default function TransactionsSkeleton() {
+  // Simulamos 5 linhas de carregamento
+  const skeletonRows = Array.from({ length: 5 });
 
   return (
-    <div className="space-y-4">
-      {skeletons.map((_, i) => (
-        <div
-          key={i}
-          className="animate-pulse flex flex-col w-full overflow-auto p-6 border border-[#EBEEEC] bg-white rounded"
-        >
-          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-            {/* Esquerda */}
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="h-4 w-48 bg-gray-200 rounded"></div>
-                <div className="h-5 w-16 bg-gray-200 rounded-full"></div>
-              </div>
-
-              <div className="h-3 w-64 bg-gray-100 rounded mb-8"></div>
-
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
-                {[1, 2, 3, 4].map((_, j) => (
-                  <div key={j}>
-                    <div className="h-3 w-20 bg-gray-200 rounded mb-1"></div>
-                    <div className="h-4 w-28 bg-gray-300 rounded"></div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Direita */}
-            <div className="flex items-center gap-2 self-start sm:self-auto">
-              <div className="h-8 w-20 bg-gray-200 rounded-md"></div>
-              <div className="h-8 w-8 bg-gray-100 rounded-md"></div>
-            </div>
-          </div>
+    <div className="p-4 border-[#F1F1F1] border bg-white rounded flex flex-col overflow-hidden">
+      <div className="w-full animate-pulse">
+        
+        {/* Simulação do TableHeader */}
+        <div className="flex px-4 pb-4 border-b border-slate-100">
+          <div className="w-[15%] h-4 bg-slate-200 rounded"></div> {/* Data */}
+          <div className="w-[25%] h-4 bg-slate-100 rounded ml-4"></div> {/* Título */}
+          <div className="w-[15%] h-4 bg-slate-100 rounded ml-4"></div> {/* Categoria */}
+          <div className="w-[15%] h-4 bg-slate-100 rounded ml-4"></div> {/* Valor */}
+          <div className="w-[15%] h-4 bg-slate-100 rounded ml-4"></div> {/* Status */}
+          <div className="w-[15%] h-4 bg-slate-200 rounded ml-4"></div> {/* Ações */}
         </div>
-      ))}
+
+        {/* Simulação das Rows */}
+        <div className="flex flex-col">
+          {skeletonRows.map((_, index) => (
+            <div
+              key={index}
+              className="flex items-center px-4 py-5 border-t border-[#EFEFEF]"
+            >
+              {/* Data */}
+              <div className="w-[15%]">
+                <div className="h-3 w-20 bg-slate-100 rounded"></div>
+              </div>
+              
+              {/* Título */}
+              <div className="w-[25%] ml-4">
+                <div className="h-4 w-3/4 bg-slate-100 rounded"></div>
+              </div>
+
+              {/* Categoria */}
+              <div className="w-[15%] ml-4">
+                <div className="h-3 w-16 bg-slate-50 rounded"></div>
+              </div>
+
+              {/* Valor */}
+              <div className="w-[15%] ml-4">
+                <div className="h-4 w-20 bg-slate-100 rounded"></div>
+              </div>
+
+              {/* Status (Badge) */}
+              <div className="w-[15%] ml-4">
+                <div className="h-6 w-16 bg-slate-50 rounded-md"></div>
+              </div>
+
+              {/* Ações */}
+              <div className="w-[15%] ml-4 flex justify-end">
+                <div className="h-4 w-24 bg-slate-100 rounded"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

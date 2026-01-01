@@ -26,9 +26,9 @@ import Link from "next/link";
 
 export default function DashboardPage() {
   // const { loading } = useAuthGuard();
-  const { dashboardKPI, loading, error } = useDashboardKPI();
+  const { dashboardKPI, loading } = useDashboardKPI();
 
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
 
   const fullName = session?.user?.name ?? "";
   const firstName = fullName.split(" ")[0];
@@ -44,17 +44,13 @@ export default function DashboardPage() {
     );
   }
 
-  const labels = ["Julho", "Agosto", "Setembro"];
-  const income = [1500, 1300, 1400];
-  const expense = [700, 550, 650];
-
   return (
     <AppLayout>
       <PageHeader
-        title="Dashboard"
+        title="Visão Geral"
         description={
           <>
-            {greeting} | Aqui está um resumo {""}das suas finanças de
+            {greeting} | Aqui está um resumo das suas finanças de
             {""}
             <span
               className="
@@ -73,9 +69,9 @@ export default function DashboardPage() {
         }
       >
         <Button
-          href="/transactions/new"
+          href="/transactions/create"
           icon={HiPlus}
-          style="bg-[#0F172A] text-[#FFFFFF] "
+          style="bg-[#0F172A] text-[#FFFFFF]"
         >
           Nova movimentação
         </Button>
@@ -84,16 +80,10 @@ export default function DashboardPage() {
         className={`grid gap-6 grid-cols-1 mb-6 pb-6 border-b border-[#F1F1F1] md:grid-cols-2 xl:grid-cols-4`}
       >
         <CardKPI
-          label="Saldo Atual"
+          label="Lucro Líquido"
           icon={HiWallet}
           value={formatCurrencyBR(dashboardKPI?.currentBalance ?? 0)}
           style="bg-[#0ACDB5] text-white"
-        />
-        <CardKPI
-          label="Lucro Líquido"
-          icon={HiChartBar}
-          value={formatCurrencyBR(dashboardKPI?.netrofit ?? 0)}
-          style="bg-[#F4F4F4] text-[#0F172A]"
         />
         <CardKPI
           label="Faturamento total"
@@ -107,10 +97,16 @@ export default function DashboardPage() {
           value={formatCurrencyBR(dashboardKPI?.totalExpense ?? 0)}
           style="bg-[#F4F4F4] text-[#0F172A]"
         />
+        <CardKPI
+          label="Qnt. Movimentações"
+          icon={HiChartBar}
+          value={"3"}
+          style="bg-[#F4F4F4] text-[#0F172A]"
+        />
       </div>
 
       <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
-        <div className=" p-4 border-[#F1F1F1] border bg-white rounded flex flex-col">
+        <div className="p-4 border-[#F1F1F1] border bg-white rounded flex flex-col">
           <div className="flex items-center justify-between pb-4">
             <p className="text-[#626262] text-sm">Últimas movimentações</p>
             <p>
@@ -127,9 +123,9 @@ export default function DashboardPage() {
               dashboardKPI.lastTransactions.map((transaction) => (
                 <div
                   key={transaction.id}
-                  className="flex items-center justify-between border-t border-[#EBEEEC] pt-4"
+                  className="flex items-center justify-between border-t gap-4 border-[#EBEEEC] pt-4 flex-col md:flex-row"
                 >
-                  <div className="space-y-1">
+                  <div className="space-y-1 self-start">
                     <p className="text-sm font-semibold text-[#0F172A]">
                       {transaction.title}
                     </p>
@@ -138,7 +134,7 @@ export default function DashboardPage() {
                     </p>
                   </div>
 
-                  <div className="space-y-1 flex flex-col items-end">
+                  <div className="space-y-1 flex flex-col items-end self-end">
                     <p
                       className={`text-sm font-medium ${
                         transaction.type === "income"
@@ -146,9 +142,7 @@ export default function DashboardPage() {
                           : "text-[#EF4444]"
                       }`}
                     >
-                      {transaction.type === "income"
-                        ? "+ "
-                        : "- "}
+                      {transaction.type === "income" ? "+ " : "- "}
                       {formatCurrencyBR(transaction.amount)}
                     </p>
                     <p className="text-xs text-[#0F172A] opacity-40">
