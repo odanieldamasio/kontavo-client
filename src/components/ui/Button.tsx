@@ -1,28 +1,53 @@
 import Link from "next/link";
 import { IconType } from "react-icons";
 
-type buttonProps = {
-  href: string;
-  icon: IconType;
+type ButtonProps = {
+  href?: string;
+  onClick?: () => void;
+  icon?: IconType;
   children?: React.ReactNode;
-  style: string;
+  variant?: "primary" | "secondary" | "danger" | "ghost";
+  className?: string;
+  type?: "button" | "submit" | "reset";
 };
 
 export default function Button({
   href,
+  onClick,
   icon: Icon,
   children,
-  style,
-}: buttonProps) {
+  variant = "primary",
+  className = "",
+  type = "button",
+}: ButtonProps) {
+  
+  const variants = {
+    primary: "bg-[#0F172A] text-white hover:bg-[#0F172A]",
+    secondary: "bg-zinc-100 text-zinc-900 hover:bg-zinc-200",
+    danger: "bg-red-500 text-white hover:bg-red-600",
+    ghost: "bg-transparent hover:bg-zinc-100",
+  };
+
+  const baseStyles = `inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium transition-colors h-10 px-4 py-2 disabled:opacity-50 disabled:pointer-events-none ${variants[variant]} ${className}`;
+
+  const content = (
+    <>
+      {Icon && <Icon className="w-4 h-4" />}
+      {children}
+    </>
+  );
+
   if (href) {
     return (
-      <Link
-        href={href}
-        className={`inline-flex flex-none items-center justify-center gap-3 rounded-md text-sm font-medium transition-colors [&_svg]:size-4 [&_svg]:shrink-0  h-10 px-4 py-2 ${style}`}
-      >
-        <Icon className="w-5 h-5" />
-        {children}
+      <Link href={href} className={baseStyles}>
+        {content}
       </Link>
     );
   }
+
+  return (
+    <button type={type} onClick={onClick} className={baseStyles}>
+      {content}
+    </button>
+  );
 }

@@ -45,6 +45,7 @@ export function Toast({
     backdrop-blur-sm
     shadow-lg shadow-black/10
     transition-opacity duration-300 ease-out
+    z-100
   `;
 
   const variants = {

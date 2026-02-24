@@ -18,17 +18,20 @@ import {
 import {
   HiArrowTrendingDown,
   HiArrowTrendingUp,
-  HiBanknotes,
   HiWallet,
 } from "react-icons/hi2";
 import { formatCurrencyBR } from "@/utils/currency";
 import Link from "next/link";
+import { useState } from "react";
+import TransactionFormContent from "../../components/transactions/TransactionFormContent";
+import Modal from "@/components/ui/Modal";
 
 export default function DashboardPage() {
-  // const { loading } = useAuthGuard();
   const { dashboardKPI, loading } = useDashboardKPI();
 
   const { data: session } = useSession();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const fullName = session?.user?.name ?? "";
   const firstName = fullName.split(" ")[0];
@@ -68,13 +71,16 @@ export default function DashboardPage() {
           </>
         }
       >
-        <Button
-          href="/transactions/create"
-          icon={HiPlus}
-          style="bg-[#0F172A] text-[#FFFFFF]"
-        >
+        <Button onClick={() => setIsModalOpen(true)} icon={HiPlus}>
           Nova movimentação
         </Button>
+        <Modal
+          isOpen={isModalOpen} 
+          onClose={() => setIsModalOpen(false)} 
+          title="Adicionar movimentação"
+        >
+          <TransactionFormContent />
+        </Modal>
       </PageHeader>
       <div
         className={`grid gap-6 grid-cols-1 mb-6 pb-6 border-b border-[#F1F1F1] md:grid-cols-2 xl:grid-cols-4`}
